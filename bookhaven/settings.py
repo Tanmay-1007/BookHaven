@@ -52,9 +52,22 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'bookhaven.wsgi.application'
 
-DATABASES = {
-    'default': dj_database_url.config(default='sqlite:///db.sqlite3')
-}
+# Ensure DATABASE_URL is read from the environment
+DATABASE_URL = os.environ.get('DATABASE_URL')
+
+# Configure DATABASES using dj-database-url
+if DATABASE_URL:
+    DATABASES = {
+        'default': dj_database_url.parse(DATABASE_URL)
+    }
+else:
+    # Fallback to SQLite if DATABASE_URL is not set
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        }
+    }
 
 AUTH_PASSWORD_VALIDATORS = [
     {
