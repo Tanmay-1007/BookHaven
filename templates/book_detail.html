@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+{% block title %}{{ book.title }}{% endblock %}
+{% block content %}
+    <div class="row">
+        <div class="col-md-4">
+            {% if book.image_url %}
+                <img src="{{ book.image_url }}" class="img-fluid book-image" alt="{{ book.title }}">
+            {% endif %}
+        </div>
+        <div class="col-md-8">
+            <h2 class="mb-4">{{ book.title }}</h2>
+            <p><strong>Author:</strong> {{ book.author }}</p>
+            <p><strong>Genre:</strong> {{ book.genre }}</p>
+            <p><strong>Publication Year:</strong> {{ book.publication_year }}</p>
+            <p><strong>Description:</strong> {{ book.description }}</p>
+        </div>
+    </div>
+
+    {% if user.is_authenticated %}
+        <h4 class="mt-4">Add to Reading List</h4>
+        <form method="post" class="mb-4">
+            {% csrf_token %}
+            {{ reading_form.as_p }}
+            {% if reading_form.errors %}
+                <div class="alert alert-danger">
+                    {% for field in reading_form %}
+                        {% for error in field.errors %}
+                            <p>{{ error }}</p>
+                        {% endfor %}
+                    {% endfor %}
+                </div>
+            {% endif %}
+            <input type="hidden" name="reading_list" value="1">
+            <button type="submit" class="btn btn-primary">Save</button>
+        </form>
+
+        <h4>Write a Review</h4>
+        <form method="post" class="mb-4">
+            {% csrf_token %}
+            {{ review_form.as_p }}
+            {% if review_form.errors %}
+                <div class="alert alert-danger">
+                    {% for field in review_form %}
+                        {% for error in field.errors %}
+                            <p>{{ error }}</p>
+                        {% endfor %}
+                    {% endfor %}
+                </div>
+            {% endif %}
+            <input type="hidden" name="review" value="1">
+            <button type="submit" class="btn btn-primary">Submit Review</button>
+        </form>
+
+        {% if user_review %}
+            <h4>Your Review</h4>
+            <p><strong>Rating:</strong> {{ user_review.rating }} / 5</p>
+            <p><strong>Comment:</strong> {{ user_review.comment }}</p>
+        {% endif %}
+    {% endif %}
+
+    <h4 class="mt-4">Reviews</h4>
+    {% for review in reviews %}
+        <div class="card mb-2">
+            <div class="card-body">
+                <p><strong>{{ review.user.username }}</strong> rated {{ review.rating }} / 5</p>
+                <p>{{ review.comment }}</p>
+                <small class="text-muted">{{ review.created_at }}</small>
+            </div>
+        </div>
+    {% empty %}
+        <p>No reviews yet.</p>
+    {% endfor %}
+{% endblock %}

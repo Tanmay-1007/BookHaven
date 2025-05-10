@@ -1,0 +1,1 @@
+echo "web: gunicorn bookhaven.wsgi --log-file -" > Procfile

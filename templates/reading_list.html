@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block title %}My Reading List{% endblock %}
+{% block content %}
+    <h2 class="text-center mb-4">My Reading List</h2>
+    <div class="row">
+        {% for entry in reading_list_entries %}
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    {% if entry.book.image_url %}
+                        <img src="{{ entry.book.image_url }}" class="card-img-top book-image" alt="{{ entry.book.title }}">
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title">{{ entry.book.title }}</h5>
+                        <h6 class="card-subtitle mb-2 text-muted">by {{ entry.book.author }}</h6>
+                        <p class="card-text"><strong>Status:</strong> {{ entry.get_status_display }}</p>
+                        <p class="card-text"><strong>Added:</strong> {{ entry.added_date }}</p>
+                        <a href="{% url 'book_detail' entry.book.id %}" class="btn btn-primary">View Details</a>
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <p class="text-center">Your reading list is empty. Add some books!</p>
+        {% endfor %}
+    </div>
+{% endblock %}
